@@ -1,39 +1,19 @@
-"""
- Example program to show using an array to back a grid on-screen.
- 
- Sample Python/Pygame Programs
- Simpson College Computer Science
- http://programarcadegames.com/
- http://simpson.edu/computer-science/
- 
- Explanation video: http://youtu.be/mdTeqiWyFnc
-"""
 import pygame
 import numpy as np
 import copy
- 
-# Define some colors
+import time
+
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
- 
-# This sets the WIDTH and HEIGHT of each grid location
-WIDTH = 20
-HEIGHT = 20
- 
-# This sets the margin between each cell
-MARGIN = 5
 
-# Create a 2 dimensional array. A two dimensional
-# array is simply a list of lists.
-grid = []
-for row in range(10):
-    # Add an empty array that will hold each cell
-    # in this row
-    grid.append([])
-    for column in range(10):
-        grid[row].append(0)  # Append a cell
+WIDTH = 40
+HEIGHT = 40
+
+WINDOW_SIZE = [700, 500]
+
+MARGIN = 5
 
 
 def reset_grid():
@@ -46,30 +26,12 @@ def reset_grid():
             grid[row].append(0)  # Append a cell
 
     return grid
- 
-grid[1][5] = 1
-y = 1
-x = 5
- 
-pygame.init()
- 
-WINDOW_SIZE = [255, 255]
-screen = pygame.display.set_mode(WINDOW_SIZE)
- 
-pygame.display.set_caption("Array Backed Grid")
- 
-done = False
- 
-clock = pygame.time.Clock()
 
-ACTIONS = {
-    "UP": 0,
-    "DOWN": 1,
-    "LEFT": 2,
-    "RIGHT":3
-    }
 
 def is_in_grid(x, y):
+    """
+        x, yがグリッドワールド内かの確認
+    """
     if y < len(grid) and y >= 0:
         if x < len(grid[0]) and x >= 0:
             return True
@@ -77,10 +39,13 @@ def is_in_grid(x, y):
 
 
 def update_agent_pos(x, y):
+    """
+        エージェントの位置の更新 
+    """
 
-    while(True):
+    while True:
         to_y, to_x = y, x
-        action = np.random.randint(5)
+        action = np.random.randint(6)
         if action == ACTIONS["UP"]:
             to_y += -1
         elif action == ACTIONS["DOWN"]:
@@ -93,9 +58,11 @@ def update_agent_pos(x, y):
         if is_in_grid(to_y, to_x) is True:
             return to_x, to_y
 
-while not done:
-    screen.fill(BLACK)
- 
+
+def draw_grid_world():
+    """
+        grid world自体の再描画
+    """
     for row in range(10):
         for column in range(10):
             color = WHITE
@@ -107,20 +74,66 @@ while not done:
                               (MARGIN + HEIGHT) * row + MARGIN,
                               WIDTH,
                               HEIGHT])
- 
-    # Limit to 60 frames per second
-    clock.tick(1)
- 
-    pygame.display.flip()
 
-    # エージェントの位置の更新
-    to_x, to_y = update_agent_pos(x, y)
 
-    # 位置の更新 
-    grid[y][x] = 0
-    grid[to_y][to_x] = 1
-    x, y = to_x, to_y
- 
-# Be IDLE friendly. If you forget this line, the program will 'hang'
-# on exit.
-pygame.quit()
+if __name__ == '__main__':
+
+    pygame.init()
+
+    # フォントの作成
+    sysfont = pygame.font.SysFont(None, 40)
+
+    grid = []
+    for row in range(10):
+        grid.append([])
+        for column in range(10):
+            grid[row].append(0)
+
+
+    screen = pygame.display.set_mode(WINDOW_SIZE)
+
+    pygame.display.set_caption("Grid World")
+
+    done = False
+
+    clock = pygame.time.Clock()
+
+    # 行動の集合
+    ACTIONS = {
+        "UP": 0,
+        "DOWN": 1,
+        "LEFT": 2,
+        "RIGHT": 3,
+        "STAY": 4}
+
+    # エージェントの初期位置
+    x, y = 1, 5
+    grid[y][x] = 1
+
+    step = 0
+    time.sleep(30)
+    while not done:
+        screen.fill(BLACK)
+
+        # grid worldの描画
+        draw_grid_world()
+
+        # テキストを描画したSurfaceを作成
+        step_str = sysfont.render("step:{}".format(step), False, WHITE)
+        
+        # 位# テキストを描画する
+        screen.blit(step_str, (500,50))
+
+        clock.tick(1)
+        step += 1
+
+        # 再描画
+        pygame.display.flip()
+
+        # エージェントの位置の更新
+        to_x, to_y = update_agent_pos(x, y)
+
+        grid[y][x] = 0
+        grid[to_y][to_x] = 1
+        x, y = to_x, to_y
+    pygame.quit()
