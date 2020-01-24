@@ -3,6 +3,7 @@
 # Edit at https://www.gitignore.io/?templates=django
 
 ### Django ###
+
 *.npy
 *.h5
 *.json
