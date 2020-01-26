@@ -131,6 +131,7 @@ if __name__ == '__main__':
 
     for episode in range(nb_episode):
         episode_reward = [] # 1エピソードの累積報酬
+        step = 0
         while(is_end_episode == False):    # ゴールするまで続ける
             action = agent.act()  # 行動選択
             state, reward, is_end_episode = grid_env.step(action)
