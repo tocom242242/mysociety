@@ -15,6 +15,14 @@ WINDOW_SIZE = [700, 500]
 
 MARGIN = 5
 
+# 行動の集合
+ACTIONS = {
+    "UP": 0,
+    "DOWN": 1,
+    "LEFT": 2,
+    "RIGHT": 3,
+    "STAY": 4
+}
 
 def reset_grid():
     grid = []
@@ -83,28 +91,19 @@ if __name__ == '__main__':
     # フォントの作成
     sysfont = pygame.font.SysFont(None, 40)
 
+    # gridの情報
     grid = []
     for row in range(10):
         grid.append([])
         for column in range(10):
             grid[row].append(0)
 
-
     screen = pygame.display.set_mode(WINDOW_SIZE)
-
     pygame.display.set_caption("Grid World")
 
     done = False
 
     clock = pygame.time.Clock()
-
-    # 行動の集合
-    ACTIONS = {
-        "UP": 0,
-        "DOWN": 1,
-        "LEFT": 2,
-        "RIGHT": 3,
-        "STAY": 4}
 
     # エージェントの初期位置
     x, y = 1, 5
@@ -136,4 +135,5 @@ if __name__ == '__main__':
         grid[y][x] = 0
         grid[to_y][to_x] = 1
         x, y = to_x, to_y
+
     pygame.quit()
