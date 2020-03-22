@@ -6,19 +6,19 @@ class GridWorld:
     def __init__(self):
 
         self.filed_type = {
-                "N": 0,  # 通常
-                "G": 1,  # ゴール
-                "W": 2,  # 壁
-                "T": 3,  # トラップ
-                "A": 4,  # トラップ
-                }
+            "N": 0,  # 通常
+            "G": 1,  # ゴール
+            "W": 2,  # 壁
+            "T": 3,  # トラップ
+            "A": 4,  # トラップ
+        }
 
         self.actions = {
-            "UP": 0, 
-            "DOWN": 1, 
-            "LEFT": 2, 
+            "UP": 0,
+            "DOWN": 1,
+            "LEFT": 2,
             "RIGHT": 3
-            }
+        }
 
         self.map = [[2, 2, 0, 1],
                     [0, 0, 0, 2],
@@ -30,7 +30,6 @@ class GridWorld:
         self.start_pos = 0, 4   # エージェントのスタート地点(x, y)
         self.agent_pos = copy.deepcopy(self.start_pos)  # エージェントがいる地点
 
-
     def step(self, action):
         """
             行動の実行
@@ -40,10 +39,9 @@ class GridWorld:
 
         # 移動可能かどうかの確認。移動不可能であれば、ポジションはそのままにマイナス報酬
         if self._is_possible_action(to_x, to_y, action) == False:
-            return self.agent_pos, -1, False
+            return self.agent_pos, -2, False
         else:
             self.map[to_y][to_x] = 0
-
 
         if action == self.actions["UP"]:
             to_y += -1
@@ -54,7 +52,7 @@ class GridWorld:
         elif action == self.actions["RIGHT"]:
             to_x += 1
 
-        is_goal = self._is_end_episode(to_x, to_y) # エピソードの終了の確認
+        is_goal = self._is_end_episode(to_x, to_y)  # エピソードの終了の確認
         reward = self._compute_reward(to_x, to_y)
         self.agent_pos = to_x, to_y
         self.map[to_y][to_x] = self.filed_type["A"]
@@ -81,7 +79,7 @@ class GridWorld:
             return False
 
     def _is_possible_action(self, x, y, action):
-        """ 
+        """
             実行可能な行動かどうかの判定
         """
         to_x = x
@@ -107,7 +105,7 @@ class GridWorld:
 
     def _compute_reward(self, x, y):
         if self.map[y][x] == self.filed_type["N"]:
-            return 0
+            return -1
         elif self.map[y][x] == self.filed_type["G"]:
             return 100
         elif self.map[y][x] == self.filed_type["T"]:
